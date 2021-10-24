@@ -6,6 +6,7 @@ var current_icon_desc
 var current_icon_link
 var daily 
 
+var cityInput
 var city_returned
 var date 
 var temperature
@@ -19,6 +20,7 @@ var fiveDaySection = document.querySelector("#future")
 var pastSection = document.querySelector("#past")
 
 var pastSearch = []
+var fetchCount = 0
 
 function extractCurrentInfo(today) {
     date = moment(today.dt, "X").format("MMM Do YYYY") 
@@ -35,6 +37,8 @@ function extractCurrentInfo(today) {
     current_icon_desc = today.weather[0].icon
     current_icon_link = "http://openweathermap.org/img/wn/" + current_icon_desc + "@2x.png"
     console.log(current_icon_link)
+
+    removeOldInfo()
 
     var currentHeader = document.createElement("h2")
     currentHeader.textContent = city_returned + " " + "(" + date + ")"
@@ -155,14 +159,23 @@ function getWeather() {
             console.log(daily)
             extractCurrentInfo(current)
             extractFutureInfo(daily)
+            fetchCount++
          })
+    
 }
 
+function removeOldInfo () {
+    if(fetchCount > 0) {
+        while(todaySection.firstChild) {
+            todaySection.removeChild(todaySection.firstChild)
+        }
+        while(fiveDaySection.firstChild) {
+            fiveDaySection.removeChild(fiveDaySection.firstChild)
+        }
+    }
+}
 
-document.querySelector("#submit").addEventListener("click", function (e) {
-    e.preventDefault()
-    console.log("clicked")
-    var cityInput = textInput.value
+function apiFetch () {
     var coordURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityInput + "&appid=95ebbf75a9f3b9334688363d6e7930b7"
 
     fetch(coordURL)
@@ -178,9 +191,22 @@ document.querySelector("#submit").addEventListener("click", function (e) {
         city_returned = data.name
         console.log(city_returned)
         getWeather()
-        pastSearch.push(city_returned)
-        localStorage.setItem("cities", JSON.stringify(pastSearch))
+        if(!pastSearch.includes(city_returned)) {
+            pastSearch.push(city_returned)
+            localStorage.setItem("cities", JSON.stringify(pastSearch))
+            var newCity = document.createElement("p")
+            newCity.textContent = city_returned
+            pastSection.append(newCity)
+        }
     })
+}
+
+
+document.querySelector("#submit").addEventListener("click", function (e) {
+    e.preventDefault()
+    console.log("clicked")
+    cityInput = textInput.value
+    apiFetch() 
 })
 
 var pastSearchArrayLocal = JSON.parse(localStorage.getItem("cities"))
@@ -197,6 +223,14 @@ else {
         pastCity.textContent = pastSearchArrayLocal[i]
         pastSection.append(pastCity)
     }
+
+    document.querySelector("#past").addEventListener("click", function (event) {
+        var oldCity = event.target
+        console.log(oldCity)
+        cityInput = oldCity.textContent
+        console.log(cityInput)
+        apiFetch()
+    })
 }
 
 
