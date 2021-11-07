@@ -1,3 +1,11 @@
+header {
+    text-align: center;
+    padding: 3px 0 3px 0;
+    background-color: #231b47;
+    color: white;
+    margin-bottom: 2%;
+}
+
 form {
     margin-bottom: 1%;
 }
@@ -6,9 +14,14 @@ form {
     display: flex;
 }
 
+#past {
+    margin-right: 1%;
+}
+
 #today {
     color: white;
     background-color: #4daceb;
+    border-radius: 3px;
 }
 
 #five-day-div {
@@ -23,4 +36,30 @@ form {
     color: white;
     background-color: #231b47;
     padding: 2%;
+    border-radius: 3px;
+}
+
+.past-searches {
+    background-color: #9fa3ab;
+    padding: 1px;
+    border-radius: 2px;
+    text-align: center;
+}
+
+.high-uvi {
+    color: red;
+    border: 1px;
+    font-weight: bold;
+}
+
+.med-uvi {
+    color: yellow;
+    border: 1px;
+    font-weight: bold;
+}
+
+.low-uvi {
+    color: green;
+    border: 1px;
+    font-weight: bold;
 }
